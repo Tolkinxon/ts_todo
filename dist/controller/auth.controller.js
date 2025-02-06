@@ -12,6 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const controller_dto_1 = require("./controller.dto");
 const error_1 = require("../utils/error");
 const validator_1 = require("../utils/validator");
+const readFile_1 = require("./../models/readFile");
+const writeFile_1 = require("./../models/writeFile");
+const jwt_1 = require("../lib/jwt/jwt");
+const { createToken } = jwt_1.tokenServise;
 class AuthController extends controller_dto_1.Auth {
     login(req, res) { }
     register(req, res) { }
@@ -23,12 +27,23 @@ class AuthController extends controller_dto_1.Auth {
                 req.on('data', (chunk) => {
                     newUser += chunk;
                 });
-                req.on('end', () => {
+                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
                     try {
                         let user = JSON.parse(newUser);
                         const validator = (0, validator_1.registerValidator)(user);
-                        console.log(validator);
-                        return res.end(JSON.stringify({ status: 'success' }));
+                        if (validator) {
+                            let users = yield (0, readFile_1.readFile)("users.json");
+                            if (users.some((item) => user.email == item.email))
+                                throw new error_1.CliesntError('This user already excist!', 400);
+                            user = Object.assign({ id: users.length ? users.at(-1).id + 1 : 1 }, user);
+                            users.push(user);
+                            let write = yield (0, writeFile_1.writeFile)('users.json', users);
+                            if (write)
+                                return res.end(JSON.stringify({ message: 'User successfully added!', status: 201, accessToken: createToken({ user_id: user.id, userAgent: req.headers['user-agent'] }) }));
+                            else
+                                throw new error_1.ServerError('User not saved!');
+                        }
+                        return res.end(JSON.stringify({ message: "success" }));
                     }
                     catch (error) {
                         let err = {
@@ -37,7 +52,7 @@ class AuthController extends controller_dto_1.Auth {
                         };
                         (0, error_1.globalError)(res, err);
                     }
-                });
+                }));
             }
             catch (error) {
                 let err = {

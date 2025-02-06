@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "first_name": "tolkinxon",
+        "last_name": "soliyev",
+        "password": "Q@dssw12",
+        "email": "soliyevtolkinxonerw@gmail.com"
+    },
+    {
+        "id": 2,
+        "first_name": "tolkinxon",
+        "last_name": "soliyev",
+        "password": "Q@dssw12",
+        "email": "soliyevtolkinxonerw2@gmail.com"
+    },
+    {
+        "id": 3,
+        "first_name": "tolkinxon",
+        "last_name": "soliyev",
+        "password": "Q@dssw12",
+        "email": "soliyevtolkinxonerw23@gmail.com"
+    }
+]

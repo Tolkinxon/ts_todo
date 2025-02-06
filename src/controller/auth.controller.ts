@@ -1,8 +1,12 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { Auth } from "./controller.dto";
 import { Error, User } from "../types";
-import { globalError } from "../utils/error";
+import { CliesntError, globalError, ServerError } from "../utils/error";
 import { registerValidator } from "../utils/validator";
+import { readFile } from "./../models/readFile";
+import { writeFile } from "./../models/writeFile";
+import { tokenServise } from "../lib/jwt/jwt";
+const { createToken } = tokenServise;
 
 class AuthController extends Auth {
     login(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
@@ -16,12 +20,22 @@ class AuthController extends Auth {
                 req.on('data', (chunk)=>{
                     newUser += chunk
                 })
-                req.on('end',()=>{
+                req.on('end', async ()=>{
                     try {
                         let user:User = JSON.parse(newUser);
                         const validator = registerValidator(user);
-                        console.log(validator)
-                        return res.end(JSON.stringify({status: 'success'}))
+                        if(validator){
+                            let users:User[] = await readFile("users.json");
+                            if(users.some((item:User)=> user.email == item.email)) throw new CliesntError('This user already excist!', 400);
+
+                            user = {id: users.length ? (((users as User[]).at(-1) as User).id as number) + 1 : 1, ...user};
+                            users.push(user);    
+                            let write:boolean = await writeFile('users.json', users);
+                            
+                            if(write) return res.end(JSON.stringify({message: 'User successfully added!', status: 201, accessToken:  createToken({user_id: user.id, userAgent: req.headers['user-agent']})}))
+                            else throw new ServerError('User not saved!')
+                        }
+                        return res.end(JSON.stringify({message: "success"}))
                         
                     } catch (error) {
                         let err:Error = {

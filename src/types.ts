@@ -6,7 +6,8 @@ export enum MEHTODS_ENUM {
 }
 
 export interface ServerConfig {
-    port: number | string
+    port: number | string,
+    dbFilePath: (fileName:string) => string
 }
 
 export type Error = {
