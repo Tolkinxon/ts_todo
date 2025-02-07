@@ -11,6 +11,7 @@ import { tokenServise } from "../lib/jwt/jwt";
 
 class TodosController extends Todos {
     getTodos(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
+    getTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     createTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     deleteTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     updateTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
@@ -129,8 +130,6 @@ class TodosController extends Todos {
                             
                             if(write) return res.end(JSON.stringify({message: 'User todo added successfully !', status: 201}))
                             else throw new ServerError('Todo not saved!')
-
-                            res.end(JSON.stringify({message: 'User todo updated successfully !', status: 201}))
                         }
                         return res.end(JSON.stringify({message: "success"}))
                         
@@ -144,6 +143,24 @@ class TodosController extends Todos {
                 })
             }
             catch(error){
+                let err:Error = {
+                    message: (error as Error).message, 
+                    status: (error as Error).status
+                }
+                globalError(res, err)
+            }
+        }
+
+        this.getTodo = async (req, res) => {
+            try{
+                let reqUrl:string = (req.url as string).trim().toLocaleLowerCase();
+
+                let todo_id:number = Number(reqUrl.split('/').at(-1));
+                if(isNaN(todo_id) || todo_id == 0) throw new CliesntError('Set id of todo', 400);
+                let todos:Todo[] = await readFileTodos("todos.json"); 
+                let todoIndex = todos.findIndex((item:Todo) => item.id == todo_id);
+                return res.end(JSON.stringify(todos[todoIndex]))
+            } catch(error){
                 let err:Error = {
                     message: (error as Error).message, 
                     status: (error as Error).status

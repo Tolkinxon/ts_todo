@@ -10,6 +10,7 @@ export abstract class Auth {
 
 export abstract class Todos {
     abstract getTodos(req:Request, res:Response): void;
+    abstract getTodo(req:Request, res:Response): void;
     abstract createTodo(req:Request, res:Response): void;
     abstract deleteTodo(req:Request, res:Response): void;
     abstract updateTodo(req:Request, res:Response): void;

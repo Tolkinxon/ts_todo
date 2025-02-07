@@ -29,8 +29,10 @@ const server = node_http_1.default.createServer((req, res) => __awaiter(void 0, 
         if (reqUrl.startsWith("/api/auth/login") && reqMethod == types_1.MEHTODS_ENUM.CREATE)
             return auth_controller_1.default.login(req, res);
         if (yield (0, checkToken_1.checkToken)(req, res)) {
-            if (reqUrl.startsWith("/api/todos") && reqMethod == types_1.MEHTODS_ENUM.READ)
+            if (reqUrl.startsWith("/api/todo/all") && reqMethod == types_1.MEHTODS_ENUM.READ)
                 return todo_controller_1.default.getTodos(req, res);
+            if (reqUrl.startsWith("/api/todo/only") && reqMethod == types_1.MEHTODS_ENUM.READ)
+                return todo_controller_1.default.getTodo(req, res);
             if (reqUrl.startsWith("/api/todo/create") && reqMethod == types_1.MEHTODS_ENUM.CREATE)
                 return todo_controller_1.default.createTodo(req, res);
             if (reqUrl.startsWith("/api/todo/delete") && reqMethod == types_1.MEHTODS_ENUM.DELETE)

@@ -16,7 +16,8 @@ const server = http.createServer(async (req, res) => {
         if(reqUrl.startsWith("/api/auth/register") && reqMethod == MEHTODS_ENUM.CREATE) return authController.register(req,res);
         if(reqUrl.startsWith("/api/auth/login") && reqMethod == MEHTODS_ENUM.CREATE) return authController.login(req,res); 
         if(await checkToken(req, res)){
-            if(reqUrl.startsWith("/api/todos") && reqMethod == MEHTODS_ENUM.READ) return todoController.getTodos(req,res);
+            if(reqUrl.startsWith("/api/todo/all") && reqMethod == MEHTODS_ENUM.READ) return todoController.getTodos(req,res);
+            if(reqUrl.startsWith("/api/todo/only") && reqMethod == MEHTODS_ENUM.READ) return todoController.getTodo(req,res);
             if(reqUrl.startsWith("/api/todo/create") && reqMethod == MEHTODS_ENUM.CREATE) return todoController.createTodo(req,res);
             if(reqUrl.startsWith("/api/todo/delete") && reqMethod == MEHTODS_ENUM.DELETE) return todoController.deleteTodo(req,res);
             if(reqUrl.startsWith("/api/todo/update") && reqMethod == MEHTODS_ENUM.UPDATE) return todoController.updateTodo(req,res);

@@ -17,6 +17,7 @@ const validator_1 = require("../utils/validator");
 const jwt_1 = require("../lib/jwt/jwt");
 class TodosController extends controller_dto_1.Todos {
     getTodos(req, res) { }
+    getTodo(req, res) { }
     createTodo(req, res) { }
     deleteTodo(req, res) { }
     updateTodo(req, res) { }
@@ -125,7 +126,6 @@ class TodosController extends controller_dto_1.Todos {
                                 return res.end(JSON.stringify({ message: 'User todo added successfully !', status: 201 }));
                             else
                                 throw new error_1.ServerError('Todo not saved!');
-                            res.end(JSON.stringify({ message: 'User todo updated successfully !', status: 201 }));
                         }
                         return res.end(JSON.stringify({ message: "success" }));
                     }
@@ -137,6 +137,24 @@ class TodosController extends controller_dto_1.Todos {
                         (0, error_1.globalError)(res, err);
                     }
                 }));
+            }
+            catch (error) {
+                let err = {
+                    message: error.message,
+                    status: error.status
+                };
+                (0, error_1.globalError)(res, err);
+            }
+        });
+        this.getTodo = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let reqUrl = req.url.trim().toLocaleLowerCase();
+                let todo_id = Number(reqUrl.split('/').at(-1));
+                if (isNaN(todo_id) || todo_id == 0)
+                    throw new error_1.CliesntError('Set id of todo', 400);
+                let todos = yield (0, readFile_1.readFileTodos)("todos.json");
+                let todoIndex = todos.findIndex((item) => item.id == todo_id);
+                return res.end(JSON.stringify(todos[todoIndex]));
             }
             catch (error) {
                 let err = {
