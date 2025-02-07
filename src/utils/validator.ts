@@ -19,3 +19,14 @@ export const registerValidator = (user:User) => {
 
     return true
 }
+
+export const loginValidator = (user:User) => {
+    const {password, email} = user;
+   
+    if(!password) throw new CliesntError('Password is required!', 400);
+    if(!email) throw new CliesntError('Email is required!', 400);
+    if(!(emailRegExp.test(email))) throw new CliesntError('This email is incorrect', 400);
+    if(!(passwordRegex.test(password))) throw new CliesntError('This password is incorrect', 400);
+
+    return true
+}

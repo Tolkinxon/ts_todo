@@ -19,6 +19,7 @@ const { createToken } = jwt_1.tokenServise;
 class AuthController extends controller_dto_1.Auth {
     login(req, res) { }
     register(req, res) { }
+    getTodos(req, res) { }
     constructor() {
         super();
         this.register = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -62,7 +63,55 @@ class AuthController extends controller_dto_1.Auth {
                 (0, error_1.globalError)(res, err);
             }
         });
-        this.login = () => __awaiter(this, void 0, void 0, function* () { });
+        this.login = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let loggedUser = '';
+                req.on('data', (chunk) => {
+                    loggedUser += chunk;
+                });
+                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        let user = JSON.parse(loggedUser);
+                        const validator = (0, validator_1.loginValidator)(user);
+                        if (validator) {
+                            let users = yield (0, readFile_1.readFile)("users.json");
+                            let findUser = users.find((item) => item.email == user.email);
+                            if ((findUser === null || findUser === void 0 ? void 0 : findUser.password) == user.password)
+                                return res.end(JSON.stringify({ message: "User successfully logged!", status: 200, accessToken: createToken({ user_id: findUser.id, userAgent: req.headers['user-agent'] }) }));
+                            else
+                                throw new error_1.CliesntError('User not found', 404);
+                        }
+                    }
+                    catch (error) {
+                        let err = {
+                            message: error.message,
+                            status: error.status
+                        };
+                        (0, error_1.globalError)(res, err);
+                    }
+                }));
+            }
+            catch (error) {
+                let err = {
+                    message: error.message,
+                    status: error.status
+                };
+                (0, error_1.globalError)(res, err);
+            }
+        });
+        this.getTodos = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let users = yield (0, readFile_1.readFile)("users.json");
+                return res.end(JSON.stringify(users));
+            }
+            catch (error) {
+                let err = {
+                    message: error.message,
+                    status: error.status
+                };
+                (0, error_1.globalError)(res, err);
+            }
+        });
     }
 }
 exports.default = new AuthController;
