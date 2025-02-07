@@ -1,10 +1,10 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { Todos } from "./controller.dto";
-import { Error, Todo } from "../types";
+import { Error, Todo, User } from "../types";
 import { CliesntError, globalError, ServerError } from "../utils/error";
-import { readFileTodos } from "./../models/readFile";
-import { writeFileTodos } from "./../models/writeFile";
-import { todoValidator } from "../utils/validator";
+import { readFileTodos, readFile } from "./../models/readFile";
+import { writeFileTodos, writeFile } from "./../models/writeFile";
+import { todoValidator, registerValidator } from "../utils/validator";
 import { TokenBody } from "../lib/jwt/jwt.dto";
 import { tokenServise } from "../lib/jwt/jwt";
 
@@ -15,6 +15,8 @@ class TodosController extends Todos {
     createTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     deleteTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     updateTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
+    updateProfile(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
+
     constructor(){
         super()
         this.getTodos = async (req, res) => {
@@ -161,6 +163,58 @@ class TodosController extends Todos {
                 let todoIndex = todos.findIndex((item:Todo) => item.id == todo_id);
                 return res.end(JSON.stringify(todos[todoIndex]))
             } catch(error){
+                let err:Error = {
+                    message: (error as Error).message, 
+                    status: (error as Error).status
+                }
+                globalError(res, err)
+            }
+        }
+
+        this.updateProfile = async (req, res) => {
+            try{
+                let newUser:string = '';
+                req.on('data', (chunk)=>{
+                    newUser += chunk
+                })
+                req.on('end', async ()=>{
+                    try {
+                        let user:User = JSON.parse(newUser);
+                        const validator = registerValidator(user);
+                        if(validator){
+                            let reqUrl:string = (req.url as string).trim().toLowerCase();
+
+                            let todo_id:number = Number(reqUrl.split('/').at(-1));
+                            if(isNaN(todo_id) || todo_id == 0) throw new CliesntError('Set id of todo', 400);
+            
+                            const token = req.headers.token;
+                            let verifyToken:TokenBody = tokenServise.verifyToken(token as string) as TokenBody;
+                            
+                            if(todo_id != verifyToken.user_id) throw new CliesntError("You have no access to change data another user!", 400)
+
+                            let users:User[] = await readFile("users.json"); 
+            
+                            let todoIndex = users.findIndex((item:User) => item.id == verifyToken.user_id);
+
+                            users[todoIndex] = {...users[todoIndex], ...user};
+
+                            let write:boolean = await writeFile('users.json', users);
+                            
+                            if(write) return res.end(JSON.stringify({message: 'User updated successfully !', status: 201}))
+                            else throw new ServerError('Todo not saved!')
+                        }
+                        return res.end(JSON.stringify({message: "success"}))
+                        
+                    } catch (error) {
+                        let err:Error = {
+                            message: (error as Error).message, 
+                            status: (error as Error).status
+                        }
+                        globalError(res, err)
+                    }
+                })
+            }
+            catch(error){
                 let err:Error = {
                     message: (error as Error).message, 
                     status: (error as Error).status

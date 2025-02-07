@@ -21,6 +21,7 @@ class TodosController extends controller_dto_1.Todos {
     createTodo(req, res) { }
     deleteTodo(req, res) { }
     updateTodo(req, res) { }
+    updateProfile(req, res) { }
     constructor() {
         super();
         this.getTodos = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -155,6 +156,53 @@ class TodosController extends controller_dto_1.Todos {
                 let todos = yield (0, readFile_1.readFileTodos)("todos.json");
                 let todoIndex = todos.findIndex((item) => item.id == todo_id);
                 return res.end(JSON.stringify(todos[todoIndex]));
+            }
+            catch (error) {
+                let err = {
+                    message: error.message,
+                    status: error.status
+                };
+                (0, error_1.globalError)(res, err);
+            }
+        });
+        this.updateProfile = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let newUser = '';
+                req.on('data', (chunk) => {
+                    newUser += chunk;
+                });
+                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        let user = JSON.parse(newUser);
+                        const validator = (0, validator_1.registerValidator)(user);
+                        if (validator) {
+                            let reqUrl = req.url.trim().toLowerCase();
+                            let todo_id = Number(reqUrl.split('/').at(-1));
+                            if (isNaN(todo_id) || todo_id == 0)
+                                throw new error_1.CliesntError('Set id of todo', 400);
+                            const token = req.headers.token;
+                            let verifyToken = jwt_1.tokenServise.verifyToken(token);
+                            if (todo_id != verifyToken.user_id)
+                                throw new error_1.CliesntError("You have no access to change data another user!", 400);
+                            let users = yield (0, readFile_1.readFile)("users.json");
+                            let todoIndex = users.findIndex((item) => item.id == verifyToken.user_id);
+                            users[todoIndex] = Object.assign(Object.assign({}, users[todoIndex]), user);
+                            let write = yield (0, writeFile_1.writeFile)('users.json', users);
+                            if (write)
+                                return res.end(JSON.stringify({ message: 'User updated successfully !', status: 201 }));
+                            else
+                                throw new error_1.ServerError('Todo not saved!');
+                        }
+                        return res.end(JSON.stringify({ message: "success" }));
+                    }
+                    catch (error) {
+                        let err = {
+                            message: error.message,
+                            status: error.status
+                        };
+                        (0, error_1.globalError)(res, err);
+                    }
+                }));
             }
             catch (error) {
                 let err = {

@@ -39,6 +39,8 @@ const server = node_http_1.default.createServer((req, res) => __awaiter(void 0, 
                 return todo_controller_1.default.deleteTodo(req, res);
             if (reqUrl.startsWith("/api/todo/update") && reqMethod == types_1.MEHTODS_ENUM.UPDATE)
                 return todo_controller_1.default.updateTodo(req, res);
+            if (reqUrl.startsWith("/api/profile/update") && reqMethod == types_1.MEHTODS_ENUM.UPDATE)
+                return todo_controller_1.default.updateProfile(req, res);
         }
     }
     else
