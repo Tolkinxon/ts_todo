@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readFile = void 0;
+exports.readFileTodos = exports.readFile = void 0;
 const promises_1 = __importDefault(require("node:fs/promises"));
 const config_1 = require("../config");
 const { dbFilePath } = config_1.serverConfiguration;
@@ -21,3 +21,8 @@ const readFile = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     return read ? JSON.parse(read) : [];
 });
 exports.readFile = readFile;
+const readFileTodos = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
+    let read = yield promises_1.default.readFile(dbFilePath(fileName), 'utf-8');
+    return read ? JSON.parse(read) : [];
+});
+exports.readFileTodos = readFileTodos;

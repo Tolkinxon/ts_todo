@@ -24,7 +24,6 @@ const checkToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             throw new error_1.CliesntError('Token is invalid', 401);
         if (!(verifyToken.userAgent == req.headers['user-agent']))
             throw new error_1.CliesntError('Token is invalid', 401);
-        console.log(verifyToken.user_id);
         return true;
     }
     catch (error) {

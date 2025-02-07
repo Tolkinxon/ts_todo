@@ -19,7 +19,6 @@ const { createToken } = jwt_1.tokenServise;
 class AuthController extends controller_dto_1.Auth {
     login(req, res) { }
     register(req, res) { }
-    getTodos(req, res) { }
     constructor() {
         super();
         this.register = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -90,19 +89,6 @@ class AuthController extends controller_dto_1.Auth {
                         (0, error_1.globalError)(res, err);
                     }
                 }));
-            }
-            catch (error) {
-                let err = {
-                    message: error.message,
-                    status: error.status
-                };
-                (0, error_1.globalError)(res, err);
-            }
-        });
-        this.getTodos = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                let users = yield (0, readFile_1.readFile)("users.json");
-                return res.end(JSON.stringify(users));
             }
             catch (error) {
                 let err = {

@@ -11,7 +11,6 @@ const { createToken } = tokenServise;
 class AuthController extends Auth {
     login(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     register(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
-    getTodos(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
 
     constructor(){
         super()
@@ -81,19 +80,6 @@ class AuthController extends Auth {
                         globalError(res, err)
                     }})
 
-            } catch(error){
-                let err:Error = {
-                    message: (error as Error).message, 
-                    status: (error as Error).status
-                }
-                globalError(res, err)
-            }
-        }
-
-        this.getTodos = async (req, res) => {
-            try{
-                let users:User[] = await readFile("users.json"); 
-                return res.end(JSON.stringify(users))
             } catch(error){
                 let err:Error = {
                     message: (error as Error).message, 

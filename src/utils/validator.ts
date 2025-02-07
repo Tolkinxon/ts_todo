@@ -1,5 +1,5 @@
 import { emit } from "node:process";
-import { User } from "../types"
+import { Todo, User } from "../types"
 import { CliesntError } from "./error";
 
 
@@ -27,6 +27,15 @@ export const loginValidator = (user:User) => {
     if(!email) throw new CliesntError('Email is required!', 400);
     if(!(emailRegExp.test(email))) throw new CliesntError('This email is incorrect', 400);
     if(!(passwordRegex.test(password))) throw new CliesntError('This password is incorrect', 400);
+
+    return true
+}
+
+export const todoValidator = (todo:Todo) => {
+    const {isComplete, message} = todo;
+
+    if(isComplete == undefined) throw new CliesntError('Complate is required!', 400);
+    if(!message) throw new CliesntError('Message is required!', 400);
 
     return true
 }

@@ -15,8 +15,6 @@ export const checkToken = async (req: IncomingMessage, res:ServerResponse<Incomi
         if(!(users.some(item => item.id == verifyToken.user_id))) throw new CliesntError('Token is invalid', 401);
         if(!(verifyToken.userAgent == req.headers['user-agent'])) throw new CliesntError('Token is invalid', 401);
 
-        console.log(verifyToken.user_id);
-        
         return true;
     }
     catch(error){

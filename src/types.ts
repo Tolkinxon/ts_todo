@@ -15,10 +15,18 @@ export type Error = {
     status: number
 } 
 
+export type Todo = {
+    id?:number,
+    user_id?:number,
+    message:string,
+    isComplete:boolean,
+}
+
 export type User = {
     id?:number,
     first_name?:string,
     last_name?:string,
     password: string,
     email: string
-}
+};
+

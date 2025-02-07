@@ -31,6 +31,12 @@ const server = node_http_1.default.createServer((req, res) => __awaiter(void 0, 
         if (yield (0, checkToken_1.checkToken)(req, res)) {
             if (reqUrl.startsWith("/api/todos") && reqMethod == types_1.MEHTODS_ENUM.READ)
                 return todo_controller_1.default.getTodos(req, res);
+            if (reqUrl.startsWith("/api/todo/create") && reqMethod == types_1.MEHTODS_ENUM.CREATE)
+                return todo_controller_1.default.createTodo(req, res);
+            if (reqUrl.startsWith("/api/todo/delete") && reqMethod == types_1.MEHTODS_ENUM.DELETE)
+                return todo_controller_1.default.deleteTodo(req, res);
+            if (reqUrl.startsWith("/api/todo/update") && reqMethod == types_1.MEHTODS_ENUM.UPDATE)
+                return todo_controller_1.default.updateTodo(req, res);
         }
     }
     else

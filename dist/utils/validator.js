@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginValidator = exports.registerValidator = void 0;
+exports.todoValidator = exports.loginValidator = exports.registerValidator = void 0;
 const error_1 = require("./error");
 let emailRegExp = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 let passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -34,3 +34,12 @@ const loginValidator = (user) => {
     return true;
 };
 exports.loginValidator = loginValidator;
+const todoValidator = (todo) => {
+    const { isComplete, message } = todo;
+    if (isComplete == undefined)
+        throw new error_1.CliesntError('Complate is required!', 400);
+    if (!message)
+        throw new error_1.CliesntError('Message is required!', 400);
+    return true;
+};
+exports.todoValidator = todoValidator;
