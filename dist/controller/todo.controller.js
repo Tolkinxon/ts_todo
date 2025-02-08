@@ -22,6 +22,7 @@ class TodosController extends controller_dto_1.Todos {
     deleteTodo(req, res) { }
     updateTodo(req, res) { }
     updateProfile(req, res) { }
+    searchTodo(req, res) { }
     constructor() {
         super();
         this.getTodos = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -203,6 +204,25 @@ class TodosController extends controller_dto_1.Todos {
                         (0, error_1.globalError)(res, err);
                     }
                 }));
+            }
+            catch (error) {
+                let err = {
+                    message: error.message,
+                    status: error.status
+                };
+                (0, error_1.globalError)(res, err);
+            }
+        });
+        this.searchTodo = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let reqUrl = req.url.trim().toLocaleLowerCase();
+                const url = new URL(`http://localhost:400/${reqUrl}`);
+                let filterObj = Object.fromEntries(url.searchParams);
+                const patternMessage = RegExp(filterObj.message, 'gi');
+                const isComplete = filterObj.iscomplete == 'true' ? true : false;
+                let todos = yield (0, readFile_1.readFileTodos)("todos.json");
+                const filteredTodos = todos.filter((item) => item.message.match(patternMessage) && item.isComplete == isComplete);
+                return res.end(JSON.stringify(filteredTodos));
             }
             catch (error) {
                 let err = {

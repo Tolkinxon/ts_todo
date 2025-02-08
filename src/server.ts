@@ -22,6 +22,7 @@ const server = http.createServer(async (req, res) => {
             if(reqUrl.startsWith("/api/todo/delete") && reqMethod == MEHTODS_ENUM.DELETE) return todoController.deleteTodo(req,res);
             if(reqUrl.startsWith("/api/todo/update") && reqMethod == MEHTODS_ENUM.UPDATE) return todoController.updateTodo(req,res);
             if(reqUrl.startsWith("/api/profile/update") && reqMethod == MEHTODS_ENUM.UPDATE) return todoController.updateProfile(req,res);
+            if(reqUrl.startsWith("/api/todo/search") && reqMethod == MEHTODS_ENUM.READ) return todoController.searchTodo(req,res);
         }
 
         

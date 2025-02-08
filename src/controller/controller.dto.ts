@@ -15,4 +15,5 @@ export abstract class Todos {
     abstract deleteTodo(req:Request, res:Response): void;
     abstract updateTodo(req:Request, res:Response): void;
     abstract updateProfile(req:Request, res:Response): void;
+    abstract searchTodo(req:Request, res:Response): void;
 }

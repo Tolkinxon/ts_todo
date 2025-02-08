@@ -16,6 +16,7 @@ class TodosController extends Todos {
     deleteTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     updateTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
     updateProfile(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
+    searchTodo(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {}
 
     constructor(){
         super()
@@ -222,6 +223,30 @@ class TodosController extends Todos {
                 globalError(res, err)
             }
         }
+
+        this.searchTodo = async (req, res) => {
+            try{
+                let reqUrl:string = (req.url as string).trim().toLocaleLowerCase();
+
+                const url = new URL(`http://localhost:400/${reqUrl}`);
+                let filterObj = Object.fromEntries(url.searchParams);
+                const patternMessage = RegExp(filterObj.message, 'gi');
+                const isComplete = filterObj.iscomplete == 'true' ? true : false;
+                 
+                let todos:Todo[] = await readFileTodos("todos.json"); 
+                const filteredTodos = todos.filter((item:Todo) => item.message.match(patternMessage) && item.isComplete == isComplete);
+
+                return res.end(JSON.stringify(filteredTodos))
+            } catch(error){
+                let err:Error = {
+                    message: (error as Error).message, 
+                    status: (error as Error).status
+                }
+                globalError(res, err)
+            }
+        }
+
+        
 
         
 
